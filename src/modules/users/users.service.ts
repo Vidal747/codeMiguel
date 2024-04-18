@@ -40,7 +40,7 @@ export class UsersService {
 					phone,
 					name,
 					password: hashedPassword,
-				}
+				},
 			});
 
 			this.functions.generateResponseApi({
@@ -58,14 +58,22 @@ export class UsersService {
 
 	async findAll() {
 		try {
+			// traer la cantidad de registros junto con los registros, luego aprender a paginar una busqueda 
 			const users = await this.prisma.user.findMany({
 				select: {
 					id: true,
 					email: true,
 					phone: true,
 					name: true,
-					password: false,
-					posts: true,
+					posts: {
+						select: {
+							id: true,
+							title: true,
+							content: true,
+							published: true,
+							createdAt: true,							
+						}
+					},
 					createdAt: true,
 					updatedAt: true,
 				},
@@ -130,11 +138,102 @@ export class UsersService {
 		}
 	}
 
-	update(id: number, updateUserDto: UpdateUserDto) {
-		return `This action updates a #${id} user`;
+	async update(id: string, updateUserDto: UpdateUserDto) {
+		try {
+			const { email, phone, name, password } = updateUserDto;
+			
+			const [userExists, actualUser] = await this.prisma.$transaction([
+				this.prisma.user.findUnique({
+					where: {
+						id,
+					},
+				}),
+				this.prisma.user.findUnique({
+					where: {
+						email,
+						AND: {
+							id: {
+								not: id,
+							}
+						},
+					},
+				}),
+			]);
+
+			if (!userExists) {
+				this.functions.generateResponseApi({
+					status: HttpStatus.NOT_FOUND,
+					message: `${Messages.ERROR_UPDATING} "No se encontró el usuario".`,
+				});
+			};
+
+			if (actualUser) {
+				this.functions.generateResponseApi({
+					status: HttpStatus.CONFLICT,
+					message: `${Messages.ERROR_CREATING} "Ya existe un usuario con este correo".`,
+				});
+			};
+
+			const hashedPassword = await hash(password, 10);
+
+			const userData = await this.prisma.user.update({
+				where: {
+					id,
+				},
+				data: {
+					email,
+					phone,
+					name,
+					password: hashedPassword,
+				}
+			});
+
+			this.functions.generateResponseApi({
+				ok: true,
+				status: HttpStatus.OK,
+				message: Messages.SECCESSFULLY_UPDATED,
+				data: [userData],
+			});
+			
+		} catch (error) {
+			if (error instanceof HttpException) throw error;
+			else this.functions.generateResponseApi({});
+		}
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} user`;
+	async remove(id: string) {
+		try {			
+			const userExists = await this.prisma.user.findUnique({
+				where: {
+					id,
+				},
+				include: {
+					posts: true,
+				}
+			});
+
+			if (!userExists) {
+				this.functions.generateResponseApi({
+					status: HttpStatus.NOT_FOUND,
+					message: `${Messages.ERROR_DELETING} "No se encontró el usuario".`,
+				});
+			};
+
+			await this.prisma.user.delete({
+				where: {
+					id,
+				},
+			});
+
+			this.functions.generateResponseApi({
+				ok: true,
+				status: HttpStatus.OK,
+				message: Messages.SECCESSFULLY_DELETED,
+			});
+			
+		} catch (error) {
+			if (error instanceof HttpException) throw error;
+			else this.functions.generateResponseApi({});
+		}
 	}
 }
