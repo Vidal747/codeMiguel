@@ -1,7 +1,5 @@
 // Sources
-import { Gender, PrismaClient } from '@prisma/client';
-import { hash } from 'bcrypt';
-import { Entities, Genders, Roles } from '../common/enums';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
