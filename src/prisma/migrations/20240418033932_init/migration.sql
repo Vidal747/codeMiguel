@@ -5,6 +5,8 @@ CREATE TABLE "User" (
     "phone" TEXT,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -16,6 +18,8 @@ CREATE TABLE "Post" (
     "content" TEXT NOT NULL,
     "published" BOOLEAN NOT NULL DEFAULT false,
     "authorId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );

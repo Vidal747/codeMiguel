@@ -208,7 +208,7 @@ export class UsersService {
 					id,
 				},
 				include: {
-					posts: true,
+					posts: true
 				}
 			});
 
