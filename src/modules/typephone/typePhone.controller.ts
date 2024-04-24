@@ -34,5 +34,3 @@ export class TypePhoneController {
 		return this.TypePhoneService.remove(id);
 	}
 }
-
-

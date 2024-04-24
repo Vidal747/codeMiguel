@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PartnerModule } from './modules/partner/partner.module';
-import { TypePhoneModule} from './modules/typephone/typePhone.module'
+import { TypePhoneModule } from './modules/typephone/typePhone.module';
 import { TypedocumetModule } from './modules/typedocumet/typedocumet.module';
-
-
 
 @Module({
 	imports: [

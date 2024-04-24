@@ -1,19 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Post` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "Post" DROP CONSTRAINT "Post_authorId_fkey";
-
--- DropTable
-DROP TABLE "Post";
-
--- DropTable
-DROP TABLE "User";
-
 -- CreateTable
 CREATE TABLE "TypeDocument" (
     "id" TEXT NOT NULL,
@@ -79,17 +63,13 @@ CREATE TABLE "Director" (
 );
 
 -- CreateTable
-CREATE TABLE "Film" (
+CREATE TABLE "Genre" (
     "id" TEXT NOT NULL,
-    "number" SERIAL NOT NULL,
-    "idMovie" TEXT NOT NULL,
-    "idState" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "movieId" TEXT NOT NULL,
-    "filmStateId" TEXT NOT NULL,
 
-    CONSTRAINT "Film_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Genre_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -106,6 +86,28 @@ CREATE TABLE "Movie" (
 );
 
 -- CreateTable
+CREATE TABLE "filmState" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "filmState_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Film" (
+    "id" TEXT NOT NULL,
+    "number" SERIAL NOT NULL,
+    "movieId" TEXT NOT NULL,
+    "filmStateId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Film_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "actorMovie" (
     "id" TEXT NOT NULL,
     "actorId" TEXT NOT NULL,
@@ -117,41 +119,11 @@ CREATE TABLE "actorMovie" (
 );
 
 -- CreateTable
-CREATE TABLE "Genre" (
-    "id" TEXT NOT NULL,
-    "typeGenre" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Genre_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "filmState" (
-    "id" TEXT NOT NULL,
-    "state" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "filmState_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "loanState" (
     "id" TEXT NOT NULL,
-    "state" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "loanState_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "WaitingState" (
-    "id" TEXT NOT NULL,
-    "state" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "WaitingState_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -200,11 +172,21 @@ CREATE TABLE "FavoriteGenre" (
 );
 
 -- CreateTable
+CREATE TABLE "WaitingState" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "WaitingState_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "WaitingList" (
     "id" TEXT NOT NULL,
-    "NumberFilm" INTEGER NOT NULL,
-    "partnerId" TEXT NOT NULL,
     "waitingStateId" TEXT NOT NULL,
+    "partnerId" TEXT NOT NULL,
+    "filmId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -219,6 +201,12 @@ CREATE UNIQUE INDEX "TypePhone_name_key" ON "TypePhone"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Partner_credential_key" ON "Partner"("credential");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "loanState_name_key" ON "loanState"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "WaitingState_name_key" ON "WaitingState"("name");
 
 -- AddForeignKey
 ALTER TABLE "Partner" ADD CONSTRAINT "Partner_typeDocumentId_fkey" FOREIGN KEY ("typeDocumentId") REFERENCES "TypeDocument"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -239,16 +227,16 @@ ALTER TABLE "Director" ADD CONSTRAINT "Director_typeDocumentId_fkey" FOREIGN KEY
 ALTER TABLE "Director" ADD CONSTRAINT "Director_typePhoneId_fkey" FOREIGN KEY ("typePhoneId") REFERENCES "TypePhone"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Film" ADD CONSTRAINT "Film_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Film" ADD CONSTRAINT "Film_filmStateId_fkey" FOREIGN KEY ("filmStateId") REFERENCES "filmState"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Movie" ADD CONSTRAINT "Movie_directorId_fkey" FOREIGN KEY ("directorId") REFERENCES "Director"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Movie" ADD CONSTRAINT "Movie_genreId_fkey" FOREIGN KEY ("genreId") REFERENCES "Genre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Film" ADD CONSTRAINT "Film_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Film" ADD CONSTRAINT "Film_filmStateId_fkey" FOREIGN KEY ("filmStateId") REFERENCES "filmState"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "actorMovie" ADD CONSTRAINT "actorMovie_actorId_fkey" FOREIGN KEY ("actorId") REFERENCES "Actor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -284,7 +272,10 @@ ALTER TABLE "FavoriteGenre" ADD CONSTRAINT "FavoriteGenre_genreId_fkey" FOREIGN 
 ALTER TABLE "FavoriteGenre" ADD CONSTRAINT "FavoriteGenre_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "Partner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "WaitingList" ADD CONSTRAINT "WaitingList_waitingStateId_fkey" FOREIGN KEY ("waitingStateId") REFERENCES "WaitingState"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "WaitingList" ADD CONSTRAINT "WaitingList_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "Partner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "WaitingList" ADD CONSTRAINT "WaitingList_waitingStateId_fkey" FOREIGN KEY ("waitingStateId") REFERENCES "WaitingState"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "WaitingList" ADD CONSTRAINT "WaitingList_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -13,8 +13,8 @@ model TypeDocument {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   partners  Partner[]
-  director  Director[]
-  actor     Actor[]
+  directors Director[]
+  actors    Actor[]
 }
 
 model TypePhone {
@@ -23,28 +23,28 @@ model TypePhone {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   partners  Partner[]
-  director  Director[]
-  actor     Actor[]
+  directors Director[]
+  actors    Actor[]
 }
 
 model Partner {
-  id               String             @id @default(uuid())
-  credential       String             @unique
-  name             String
-  typeDocumentId   String
-  typeDocument     TypeDocument       @relation(fields: [typeDocumentId], references: [id])
-  document         String
-  typePhoneId      String
-  typePhone        TypePhone          @relation(fields: [typePhoneId], references: [id])
-  phone            String
-  address          String
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  favoriteDirector FavoriteDirector[]
-  favoriteActor    FavoriteActor[]
-  favoriteGenre    FavoriteGenre[]
-  waitingList      WaitingList[]
-  loan             Loan[]
+  id                String             @id @default(uuid())
+  credential        String             @unique
+  name              String
+  typeDocumentId    String
+  typeDocument      TypeDocument       @relation(fields: [typeDocumentId], references: [id])
+  document          String
+  typePhoneId       String
+  typePhone         TypePhone          @relation(fields: [typePhoneId], references: [id])
+  phone             String
+  address           String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  favoriteDirectors FavoriteDirector[]
+  favoriteActors    FavoriteActor[]
+  favoriteGenres    FavoriteGenre[]
+  waitingLists      WaitingList[]
+  loans             Loan[]
 }
 
 model Actor {
@@ -58,51 +58,67 @@ model Actor {
   phone          String
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  actorMovie     actorMovie[]
-  favoriteActor  FavoriteActor[]
+  actorMovies    actorMovie[]
+  favoriteActors FavoriteActor[]
 }
 
 model Director {
-  id               String             @id @default(uuid())
-  name             String
-  typeDocumentId   String
-  typeDocument     TypeDocument       @relation(fields: [typeDocumentId], references: [id])
-  document         String
-  typePhoneId      String
-  typePhone        TypePhone          @relation(fields: [typePhoneId], references: [id])
-  phone            String
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  movie            Movie[]
-  favoriteDirector FavoriteDirector[]
+  id                String             @id @default(uuid())
+  name              String
+  typeDocumentId    String
+  typeDocument      TypeDocument       @relation(fields: [typeDocumentId], references: [id])
+  document          String
+  typePhoneId       String
+  typePhone         TypePhone          @relation(fields: [typePhoneId], references: [id])
+  phone             String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  movies            Movie[]
+  favoriteDirectors FavoriteDirector[]
 }
 
-model Film {
-  id          String    @id @default(uuid())
-  number      Int       @default(autoincrement())
-  movie       Movie     @relation(fields: [movieId], references: [id])
-  idState     String 
-  filmStateId String
-  state       filmState @relation(fields: [filmStateId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  movieId     String
- 
-  loan        Loan[]
+model Genre {
+  id             String          @id @default(uuid())
+  name           String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  movies         Movie[]
+  favoriteGenres FavoriteGenre[]
 }
 
 model Movie {
-  id         String       @id @default(uuid())
-  name       String
-  duration   Int
-  directorId String
-  director   Director     @relation(fields: [directorId], references: [id])
-  genreId    String
-  genre      Genre        @relation(fields: [genreId], references: [id])
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  film       Film[]
-  actorMovie actorMovie[]
+  id          String       @id @default(uuid())
+  name        String
+  duration    Int
+  directorId  String
+  director    Director     @relation(fields: [directorId], references: [id])
+  genreId     String
+  genre       Genre        @relation(fields: [genreId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  films       Film[]
+  actorMovies actorMovie[]
+}
+
+model filmState {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  films     Film[]
+}
+
+model Film {
+  id           String        @id @default(uuid())
+  number       Int           @default(autoincrement())
+  movieId      String
+  movie        Movie         @relation(fields: [movieId], references: [id])
+  filmStateId  String
+  filmState    filmState     @relation(fields: [filmStateId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  loans        Loan[]
+  waitingLists WaitingList[]
 }
 
 model actorMovie {
@@ -115,35 +131,10 @@ model actorMovie {
   updatedAt DateTime @updatedAt
 }
 
-model Genre {
-  id            String          @id @default(uuid())
-  typeGenre     String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  movie         Movie[]
-  favoriteGenre FavoriteGenre[]
-}
-
-model filmState {
-  id        String   @id @default(uuid())
-  state     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  film      Film[]
-}
-
 model loanState {
   id    String @id @default(uuid())
-  state String
-  Loan  Loan[]
-}
-
-model WaitingState {
-  id          String        @id @default(uuid())
-  state       String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  waitingList WaitingList[]
+  name  String @unique
+  Loans Loan[]
 }
 
 model Loan {
@@ -188,13 +179,22 @@ model FavoriteGenre {
   updatedAt DateTime @updatedAt
 }
 
+model WaitingState {
+  id          String        @id @default(uuid())
+  name        String @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  waitingList WaitingList[]
+}
+
 model WaitingList {
   id             String       @id @default(uuid())
-  NumberFilm     Int
-  partnerId      String
-  partner        Partner      @relation(fields: [partnerId], references: [id])
   waitingStateId String
   waitingState   WaitingState @relation(fields: [waitingStateId], references: [id])
+  partnerId      String
+  partner        Partner      @relation(fields: [partnerId], references: [id])
+  filmId         String
+  film           Film         @relation(fields: [filmId], references: [id])
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }

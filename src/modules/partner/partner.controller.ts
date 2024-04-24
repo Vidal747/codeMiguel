@@ -34,5 +34,3 @@ export class PartnerController {
 		return this.PartnerService.remove(id);
 	}
 }
-
-
