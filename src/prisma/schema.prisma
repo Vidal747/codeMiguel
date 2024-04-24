@@ -7,24 +7,194 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
-  phone    String?
-  name     String
-  password String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts    Post[]
+model TypeDocument {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  partners  Partner[]
+  director  Director[]
+  actor     Actor[]
 }
 
-model Post {
+model TypePhone {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  partners  Partner[]
+  director  Director[]
+  actor     Actor[]
+}
+
+model Partner {
+  id               String             @id @default(uuid())
+  credential       String             @unique
+  name             String
+  typeDocumentId   String
+  typeDocument     TypeDocument       @relation(fields: [typeDocumentId], references: [id])
+  document         String
+  typePhoneId      String
+  typePhone        TypePhone          @relation(fields: [typePhoneId], references: [id])
+  phone            String
+  address          String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  favoriteDirector FavoriteDirector[]
+  favoriteActor    FavoriteActor[]
+  favoriteGenre    FavoriteGenre[]
+  waitingList      WaitingList[]
+  loan             Loan[]
+}
+
+model Actor {
+  id             String          @id @default(uuid())
+  name           String
+  typeDocumentId String
+  typeDocument   TypeDocument    @relation(fields: [typeDocumentId], references: [id])
+  document       String
+  typePhoneId    String
+  typePhone      TypePhone       @relation(fields: [typePhoneId], references: [id])
+  phone          String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  actorMovie     actorMovie[]
+  favoriteActor  FavoriteActor[]
+}
+
+model Director {
+  id               String             @id @default(uuid())
+  name             String
+  typeDocumentId   String
+  typeDocument     TypeDocument       @relation(fields: [typeDocumentId], references: [id])
+  document         String
+  typePhoneId      String
+  typePhone        TypePhone          @relation(fields: [typePhoneId], references: [id])
+  phone            String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  movie            Movie[]
+  favoriteDirector FavoriteDirector[]
+}
+
+model Film {
+  id          String    @id @default(uuid())
+  number      Int       @default(autoincrement())
+  movie       Movie     @relation(fields: [movieId], references: [id])
+  idState     String 
+  filmStateId String
+  state       filmState @relation(fields: [filmStateId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  movieId     String
+ 
+  loan        Loan[]
+}
+
+model Movie {
+  id         String       @id @default(uuid())
+  name       String
+  duration   Int
+  directorId String
+  director   Director     @relation(fields: [directorId], references: [id])
+  genreId    String
+  genre      Genre        @relation(fields: [genreId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  film       Film[]
+  actorMovie actorMovie[]
+}
+
+model actorMovie {
   id        String   @id @default(uuid())
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-  title     String
-  content   String
-  published Boolean  @default(false)
+  actorId   String
+  actor     Actor    @relation(fields: [actorId], references: [id])
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Genre {
+  id            String          @id @default(uuid())
+  typeGenre     String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  movie         Movie[]
+  favoriteGenre FavoriteGenre[]
+}
+
+model filmState {
+  id        String   @id @default(uuid())
+  state     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  film      Film[]
+}
+
+model loanState {
+  id    String @id @default(uuid())
+  state String
+  Loan  Loan[]
+}
+
+model WaitingState {
+  id          String        @id @default(uuid())
+  state       String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  waitingList WaitingList[]
+}
+
+model Loan {
+  id          String    @id @default(uuid())
+  partnerId   String
+  partner     Partner   @relation(fields: [partnerId], references: [id])
+  filmId      String
+  film        Film      @relation(fields: [filmId], references: [id])
+  loanStateId String
+  loanState   loanState @relation(fields: [loanStateId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model FavoriteDirector {
+  id         String   @id @default(uuid())
+  directorId String
+  director   Director @relation(fields: [directorId], references: [id])
+  partnerId  String
+  partner    Partner  @relation(fields: [partnerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model FavoriteActor {
+  id        String   @id @default(uuid())
+  actorId   String
+  actor     Actor    @relation(fields: [actorId], references: [id])
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FavoriteGenre {
+  id        String   @id @default(uuid())
+  genreId   String
+  genre     Genre    @relation(fields: [genreId], references: [id])
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WaitingList {
+  id             String       @id @default(uuid())
+  NumberFilm     Int
+  partnerId      String
+  partner        Partner      @relation(fields: [partnerId], references: [id])
+  waitingStateId String
+  waitingState   WaitingState @relation(fields: [waitingStateId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

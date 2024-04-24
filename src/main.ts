@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-
 import { AppModule } from './app.module';
 import { setupSwagger } from './config/swagger.config';
 
@@ -16,6 +15,9 @@ async function bootstrap() {
 			whitelist: true,
 			forbidNonWhitelisted: true,
 			transform: true,
+			transformOptions:{
+				enableImplicitConversion:true
+			}
 		}),
 	);
 	app.enableVersioning({

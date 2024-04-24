@@ -11,6 +11,7 @@ interface GenerateResponseApi {
 		totalPages?: number;
 		total?: number;
 		search?: string;
+		
 	};
 	issues?: any[];
 }
