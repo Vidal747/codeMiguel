@@ -6,6 +6,7 @@ import { ActorModule } from './modules/actor/actor.module';
 import { DirectorModule } from './modules/director/director.module';
 import { FilmModule } from './modules/film/film.module';
 import { MovieModule } from './modules/movie/movie.module';
+import { LoanModule } from './modules/loans/loan.module';
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { MovieModule } from './modules/movie/movie.module';
 		DirectorModule,
 		FilmModule,
 		MovieModule,
+		LoanModule,
 	],
 })
 export class AppModule {

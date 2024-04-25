@@ -3,7 +3,6 @@ import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { query } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Movie')
 @Controller('movie')

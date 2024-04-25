@@ -129,6 +129,7 @@ CREATE TABLE "loanState" (
 -- CreateTable
 CREATE TABLE "Loan" (
     "id" TEXT NOT NULL,
+    "succession" INTEGER NOT NULL,
     "partnerId" TEXT NOT NULL,
     "filmId" TEXT NOT NULL,
     "loanStateId" TEXT NOT NULL,
@@ -222,6 +223,12 @@ CREATE UNIQUE INDEX "Film_number_key" ON "Film"("number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "loanState_name_key" ON "loanState"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Loan_id_key" ON "Loan"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Loan_succession_key" ON "Loan"("succession");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "WaitingState_name_key" ON "WaitingState"("name");
