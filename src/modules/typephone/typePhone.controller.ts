@@ -4,7 +4,7 @@ import { TypePhoneService } from './typePhone.service';
 import { createTypePhoneDto } from './dto/create-typePhone.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
-@ApiTags('typePhone')
+@ApiTags('TypePhone')
 @Controller('typePhone')
 export class TypePhoneController {
 	constructor(private readonly TypePhoneService: TypePhoneService) {}

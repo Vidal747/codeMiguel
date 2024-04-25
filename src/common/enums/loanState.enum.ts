@@ -3,3 +3,4 @@ export enum LoanStates {
     BOOKED = 'BOOKED',
     RETURNED = 'RETURNED',
 };
+

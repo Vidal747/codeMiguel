@@ -4,7 +4,7 @@ import { PartnerService } from './partner.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
-@ApiTags('partner')
+@ApiTags('Partner')
 @Controller('partner')
 export class PartnerController {
 	constructor(private readonly PartnerService: PartnerService) {}

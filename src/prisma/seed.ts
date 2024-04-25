@@ -1,6 +1,6 @@
 // Sources
 import { PrismaClient, loanState } from '@prisma/client';
-import { LoanStates } from '../common/enums';
+import { LoanStates,TypeDocuments,TypePhones, MovieGenre, FilmState } from '../common/enums';
 
 const prisma = new PrismaClient();
 
@@ -18,6 +18,45 @@ async function main() {
 		})
 	);
 
+	
+
+	await Promise.all(
+		Object.values(TypePhones).map(async (state) => {
+			const result = await prisma.typePhone.upsert({
+				where: { name: state },
+				update: {},
+				create: { name: state },
+			})
+		})
+	);
+	await Promise.all(
+		Object.values(TypeDocuments).map(async (state) => {
+			const result = await prisma.typeDocument.upsert({
+				where: { name: state },
+				update: {},
+				create: { name: state },
+			})
+		})
+	);
+	await Promise.all(
+		Object.values(MovieGenre).map(async (state) => {
+			const result = await prisma.genre.upsert({
+				where: { name: state },
+				update: {},
+				create: { name: state },
+			})
+		})
+	);
+
+	await Promise.all(
+		Object.values(FilmState).map(async (state) => {
+			const result = await prisma.filmState.upsert({
+				where: { name: state },
+				update: {},
+				create: { name: state },
+			})
+		})
+	);
 }
 main()
 	.then(async () => {

@@ -98,7 +98,7 @@ CREATE TABLE "filmState" (
 -- CreateTable
 CREATE TABLE "Film" (
     "id" TEXT NOT NULL,
-    "number" SERIAL NOT NULL,
+    "number" INTEGER NOT NULL,
     "movieId" TEXT NOT NULL,
     "filmStateId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -201,6 +201,24 @@ CREATE UNIQUE INDEX "TypePhone_name_key" ON "TypePhone"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Partner_credential_key" ON "Partner"("credential");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Actor_document_key" ON "Actor"("document");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Director_document_key" ON "Director"("document");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Genre_name_key" ON "Genre"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Movie_name_key" ON "Movie"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "filmState_name_key" ON "filmState"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Film_number_key" ON "Film"("number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "loanState_name_key" ON "loanState"("name");
